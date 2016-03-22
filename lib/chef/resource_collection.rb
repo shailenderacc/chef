@@ -33,9 +33,12 @@ class Chef
     extend Forwardable
 
     attr_reader :resource_set, :resource_list
+    attr_accessor :run_context
+
     private :resource_set, :resource_list
 
-    def initialize
+    def initialize(run_context = nil)
+      @run_context = run_context
       @resource_set = ResourceSet.new
       @resource_list = ResourceList.new
     end
@@ -85,5 +88,20 @@ class Chef
     def_delegators :resource_list, *resource_list_methods
     def_delegators :resource_set, *resource_set_methods
 
+    # recursive_find searches the current resource collection and failing to find any resource there
+    # will search 'enclosing' parent resources until it hits the root resource collection.
+    #
+    # it has the same syntax as find
+    def recursive_find(*args)
+      rc = run_context
+      loop do
+        begin
+          return rc.resource_collection.find(*args)
+        rescue Chef::Exceptions::ResourceNotFound
+          rc = rc.parent_run_context
+          raise if rc.nil?
+        end
+      end
+    end
   end
 end

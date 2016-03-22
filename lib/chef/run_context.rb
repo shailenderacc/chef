@@ -172,7 +172,7 @@ class Chef
     #
     def initialize_child_state
       @audits = {}
-      @resource_collection = Chef::ResourceCollection.new
+      @resource_collection = Chef::ResourceCollection.new(self)
       @before_notification_collection = Hash.new { |h, k| h[k] = [] }
       @immediate_notification_collection = Hash.new { |h, k| h[k] = [] }
       @delayed_notification_collection = Hash.new { |h, k| h[k] = [] }
