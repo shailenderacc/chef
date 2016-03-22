@@ -56,7 +56,7 @@ class Chef
       # This will look up the resource if it is not a Resource Object.  It will complain if it finds multiple
       # resources, can't find a resource, or gets invalid syntax.
       def fix_resource_reference(resource_collection)
-        matching_resource = resource_collection.find(resource)
+        matching_resource = resource_collection.recursive_find(resource)
         if Array(matching_resource).size > 1
           msg = "Notification #{self} from #{notifying_resource} was created with a reference to multiple resources, "\
           "but can only notify one resource. Notifying resource was defined on #{notifying_resource.source_line}"
